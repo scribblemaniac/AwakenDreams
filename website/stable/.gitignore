@@ -13,9 +13,5 @@ _*
 # tmp is a deprecated folder that used to be used for encrypting emails
 tmp/
 
-# stats contains user data gathered during the initial stages of the website
-# TODO Anonymize and publish this data
-stats/
-
 # Garbage file resulting from the synchronization process
 .ftpquota
