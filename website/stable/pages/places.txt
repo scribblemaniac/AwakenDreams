@@ -1,0 +1,46 @@
+<style type="text/css">
+.heading {
+ text-decoration: underline;
+ font-size: 14px;
+}
+li {
+ padding-bottom: 14px;
+}
+</style>
+<ul>
+<li><span class="heading">Bree</span><br />
+Warp: bree<br />
+Description: Bree was a village, of men and some hobbits, in Middle-Earth located east of the Shire and north of Fornost Erain in Eridor</li>
+<li><span class="heading">Edoras (in progress)</span><br />
+Warp: edoras<br />
+Description: Edoras was the capital city of Rohan, Home of the Rohirrim. It holds the golden hall of meduseld</li>
+<li><span class="heading">Ford of Bruinen</span><br />
+Warp: bruinen<br />
+Description: The river Bruinen (loudwater) is a river in the region of Eriador, in Middle-Earth leading into the Mitheithel. The Bruinen had only one point where it could be passed, a ford near Rivendell.</li>
+<li><span class="heading">Fornost</span><br />
+Warp: fornost<br />
+Definition: Fornost, also known fully as Fornost Erain, was a city in Eriador in the kingdom of Arnor. It was located at the south end of the North Downs, north of Bree. It was eventually abandoned and fell into ruin, and became popularly known as Deadmen’s Dike.</li>
+<li><span class="heading">Helm's Deep</span><br />
+Warp: helms_deep or hornburg<br />
+Definition: Helm's Deep was a large valley in the north-west of the White Mountains. The valley was blocked over its entire width by natural mountains called Helm's Dike and behind that lay the fortress of Aglarond or the Hornburg, at the entrance to the Glittering Caves. Inside the keep there were stables and a amoury, as well as a great hall was dug out of the mountain side. There was also a great tower which contained the great horn of Helm Hammerhand.</li>
+<li><span class="heading">Hobbiton</span><br />
+Warp: hobbiton<br />
+Description: Hobbiton is a village in the Shire. It is one of the older villages located in that land. It is home to some important characters such as Frodo Baggins and Samwise Gamagee. Bagend is also located here.</li>
+<li><span class="heading">Isengard</span><br />
+Warp: isengard<br />
+Definition: Isengard was built in the second age around the tower of Orthanc. Its location is at the northwestern corner of Gondor, guarding the fords of Isen. Together with Helm's Deep it protected the Gap of Rohan. At first Isengard was a very pleasant place with many trees and grass fields, fed by the river until it was damned. After Saurman’s defeat, however, Treebeard and the rest of the Ents made it a vivid green area again.</li>
+<li><span class="heading">Moria (in progress)</span><br />
+Warp: moria<br />
+For thousands of years, dwarves thrived mining deep below the Misty Mountains seeking to build their city there, and to find sources of treasure, gold and mithril. In Third Age 1980 they awoke the beast known as Durin's Bane Leading to it's abandonment. It is now a massive stone labyrinth filled with goblins and orcs.</li>
+<li><span class="heading">Rivendell</span><br />
+Warp : rivendell<br />
+Rivendell, also known as Imladris, was an elven outpost in Middle-Earth. It was built by Elrond in the Second Age. He lived there with Celebrain, his wife, and their two children. Arwen and Glorfindel lived there also.</li>
+<li><span class="heading">Trollshaw</span><br />
+Warp: trollshaws<br />
+The Trollshaws were the upland woods, consisting of partly beech trees, that lay to the west of Rivendell between the rivers Hoarwell (Mitheithel) and Loudwater (Bruinen) in eastern Eriador. Trolls roamed these lands and terrorized any trespassers that dared go near them. It was located it Rhudaur, East Eriador.</li>
+<li><span class="heading">Weathertop</span><br />
+Warp: weathertop<br />
+Weathertop, known also as also Amon S&#250;l, was a hill in the Eriador region of Middle-earth, and was the southernmost and highest summit of the Weather Hills. The Watch Tower of Amon S&#250;l rests on it's peak. It was a fortress of Arnor and its top overlooked the Great East Road in central Eriador, about halfway between the Shire and Rivendell.</li>
+<li><span class="heading">Weather Wall</span><br />
+Warp: weather_wall<br />
+Description: The longest wall in Middle Earth, it is located in Arnor.</li>

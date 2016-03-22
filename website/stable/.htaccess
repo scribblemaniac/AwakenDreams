@@ -1,0 +1,22 @@
+RewriteEngine on
+DirectoryIndex index.php index.html
+
+RewriteCond %{HTTP_HOST} ^tvp\.elementfx\.com$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.tvp\.elementfx\.com$
+RewriteRule ^index\.html$ "http\:\/\/tvp\.elementfx\.com\/index\.php" [R=301,L]
+
+RewriteCond %{HTTP_HOST} ^tvp\.elementfx\.com$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.tvp\.elementfx\.com$
+RewriteRule ^index\.htm$ "http\:\/\/tvp\.elementfx\.com\/index\.php" [R=301,L]
+
+RewriteCond %{HTTP_HOST} ^tvp\.x10host\.com$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.tvp\.x10host\.com$
+RewriteRule ^index\.html$ "http\:\/\/tvp\.x10host\.com\/index\.php" [R=301,L]
+
+RewriteCond %{HTTP_HOST} ^tvp\.x10host\.com$ [OR]
+RewriteCond %{HTTP_HOST} ^www\.tvp\.x10host\.com$
+RewriteRule ^index\.htm$ "http\:\/\/tvp\.x10host\.com\/index\.php" [R=301,L]
+
+SetEnv APP_ROOT_PATH /home/tvpx10ho/public_html/
+
+Options -Indexes

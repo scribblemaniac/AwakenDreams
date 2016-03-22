@@ -1,0 +1,265 @@
+<style type="text/css">
+.rank {
+ text-align: center;
+ text-decoration: underline;
+}
+</style>
+So many people have helped out with The Valar Project and here we try to recognize all the wonderful people that helped make us what we are today. Since there are so many people that have helped us, we may have missed a few people. If you believe that a name should be on there that currently is not, please contact us and let us know who we are missing so that we can add them. We have sorted people by their ranking on the server, however this is not a true reflection of how much they have helped the server, and should not be taken as an accurate classification of worth in our project.
+<div class="rank">Eru Il&#250;vatar</div>
+<p>nicrlaitheking - Founder of The Valar Project, server owner, skinner, modeler, planner</p>
+<br />
+<div class="rank">King of Valar</div>
+<p>scribblemaniac - Creator of the Awaken Dreams Mod, server co-owner, creator of this website</p>
+<br />
+<div class="rank">Prince of Valar</div>
+<p>nickgoss - A faithful builder on our server</p>
+<br />
+<div class="rank">Valar</div>
+<p>mjc5592</p>
+<p>fingfong</p>
+<p>Hannes_Elessar</p>
+<p>Pengwinrex</p>
+<p>rauls40</p>
+<br />
+<div class="rank">Maia</div>
+<p>Mahiltunen</p>
+<p>shadowbalrog</p>
+<p>marboy1</p>
+<p>EstJoel</p>
+<p>Spartan_2589</p>
+<p>espen11111</p>
+<p>Noahtaylor8</p>
+<p>maxwinstanley</p>
+<p>dreader4321</p>
+<p>ReCaPReckless</p>
+<br />
+<div class="rank">Aran</div>
+<p>racer1110</p>
+<p>sergio0132</p>
+<p>MangaFanFicFan</p>
+<br />
+<div class="rank">Turmahîr</div>
+<p>sordxyx</p>
+<p>AdobeGFX</p>
+<p>TRON_DOG</p>
+<p>BuildFreak101</p>
+<p>Pablar_Graymane</p>
+<p>will92002</p>
+<p>Tilmanator</p>
+<p>pandasaurus7777</p>
+<p>fivesyounger</p>
+<p>DragonSkyD</p>
+<p>toon2000</p>
+<p>Captain_Creeper_</p>
+<br />
+<div class="rank">Arphen</div>
+<p>Maxulle3</p>
+<p>flashcoms497</p>
+<p>yoda2012</p>
+<p>captain</p>
+<p>Dwerrim</p>
+<p>Gunnar9553</p>
+<p>EpicalMan01</p>
+<p>jacob</p>
+<p>bigjto</p>
+<p>wolfeye123</p>
+<p>lawrencecoco</p>
+<p>DragonHorizon</p>
+<p>kajetan007</p>
+<p>rjvitt</p>
+<p>Blacksmith00</p>
+<p>Theoangel98</p>
+<p>ksf12</p>
+<p>babe567</p>
+<p>scrappydriver</p>
+<p>buggalova</p>
+<p>nickboy501</p>
+<p>GandalfNine</p>
+<p>Piney90</p>
+<br />
+<div class="rank">Ohtar</div>
+<p>Electric_twig</p>
+<p>rshelton</p>
+<p>Legosoldat</p>
+<p>starkrown</p>
+<p>spocke</p>
+<p>LTALEX47</p>
+<p>patrick9494</p>
+<p>Sn0whunter</p>
+<p>JurreNawijn</p>
+<p>jakepeixoto</p>
+<p>Kreeper_Killer</p>
+<p>gamerwiley</p>
+<p>call_of_cheese</p>
+<p>chazalaa98</p>
+<p>callofthedeadz2</p>
+<p>akvarista11</p>
+<p>GreenWalrus</p>
+<p>ninjachicken17</p>
+<p>RAVEN666</p>
+<p>Sartaws</p>
+<p>osianelianrockz</p>
+<p>WasabiSpy</p>
+<p>Fremontlax43</p>
+<p>Nataniel_98</p>
+<p>luke16</p>
+<p>Erwii</p>
+<p>thomvd2</p>
+<p>legendaryhawk</p>
+<p>pepel101</p>
+<p>lum6dum</p>
+<p>Endrex5</p>
+<p>hinrik98</p>
+<p>pokebug</p>
+<p>jkcrafters</p>
+<p>z123at321</p>
+<p>B6999</p>
+<p>racoon123456</p>
+<p>ReneSwiegers</p>
+<p>tomtigergrounds</p>
+<p>Mythril_Knight</p>
+<p>ruphio<p>
+<p>DarkReaper23</p>
+<p>Hastieboy3</p>
+<p>killaco</p>
+<p>horneymonkey</p>
+<p>NooYah</p>
+<p>evolved</p>
+<p>carterup</p>
+<p>BlazingElf</p>
+<p>noahnims8</p>
+<p>Danny_Map</p>
+<p>Evolved_vintage</p>
+<p>syoung66</p>
+<p>jimmy901</p>
+<p>littleturtle1212</p>
+<p>ethantaylor8</p>
+<p>Emory</p>
+<p>tronman000</p>
+<p>daganoth117</p>
+<p>Rakree</p>
+<p>minecraftington</p>
+<p>666chizzle666</p>
+<p>xXAidanRainXx</p>
+<p>filip1404</p>
+<p>crafter341341</p>
+<p>super_dog_power</p>
+<p>sabbott15</p>
+<p>doomerred</p>
+<p>stash2001002</p>
+<p>Alex_Michels</p>
+<p>ps170</p>
+<p>CAPA_</p>
+<p>telamonianajax</p>
+<p>dongumi</p>
+<p>cachambi</p>
+<p>alebu100</p>
+<p>oleczka97</p>
+<p>gubben21</p>
+<p>OrbitNeptune</p>
+<p>saturnstar</p>
+<p>CaptainTorrisJr</p>
+<p>muramoo</p>
+<p>Muramoo</p>
+<p>squaremanfish</p>
+<p>Dholak</p>
+<p>Witch_K1ng</p>
+<p>Hman49</p>
+<p>CommanderDrenn</p>
+<p>tommyboy68w</p>
+<p>1ewanisepic</p>
+<p>lordpedro999</p>
+<p>Morgana765432<p>
+<p>marcos105</p>
+<p>1gunnar1</p>
+<p>bann154</p>
+<p>verdi25</p>
+<p>TheDanielBerry</p>
+<p>NikihakSRB</p>
+<p>V3N3M0US0BS1D1AN</p>
+<p>ghostgunner</p>
+<p>robwookie</p>
+<p>nedaj2000</p>
+<p>the_warg</p>
+<p>hd9</p>
+<p>3pic</p>
+<p>3PICplaya_</p>
+<p>berendjan</p>
+<p>beny22</p>
+<p>KingAlexwh</p>
+<p>robinfilm</p>
+<p>ned2ded</p>
+<p>yodaman1997</p>
+<p>Sussie</p>
+<p>_Skydiver_</p>
+<p>_Skydiver</p>
+<p>conorgreen</p>
+<p>tyrel7</p>
+<p>Brennaville</p>
+<p>paysonmoto</p>
+<p>maxybonnie</p>
+<p>ShadeWisp</p>
+<p>FrozenHarrison</p>
+<p>ronaldofannr3</p>
+<p>zapfod</p>
+<p>JoMama_</p>
+<p>Karl_Magne</p>
+<p>MattFannin</p>
+<p>Michael50PL</p>
+<p>iShadowHD</p>
+<p>hulkman2000</p>
+<p>rodwelljp</p>
+<p>ktulu_v</p>
+<p>huddy8</p>
+<p>Koning_Weeman033</p>
+<p>CargoMonkey</p>
+<p>raghdabitar</p>
+<p>H3iro</p>
+<p>shadowbane0</p>
+<p>Novetime</p>
+<p>Novertime</p>
+<p>Zoroark173</p>
+<p>Luke_SkyOtter</p>
+<p>kalystori</p>
+<p>Olavanders</p>
+<p>edwardscience</p>
+<p>TNTking77</p>
+<p>FatherDaniel</p>
+<p>tacolover128</p>
+<p>Triggerdude1209</p>
+<p>castitine</p>
+<p>samathisen</p>
+<p>Tastee92</p>
+<p>jakeyray18</p>
+<p>mharvey36</p>
+<p>grnfro</p>
+<p>Grenfro</p>
+<p>erabeus</p>
+<p>Matinz</p>
+<p>Bragidon</p>
+<p>vonbren</p>
+<p>izze96</p>
+<p>Pikalugia</p>
+<p>tichonaran</p>
+<p>mojoboko</p>
+<p>UMDsorus</p>
+<p>alpha46574</p>
+<p>torbis123</p>
+<p>jamesmaddix52673</p>
+<p>legomanx4</p>
+<p>mr369games</p>
+<p>Emmsickle</p>
+<p>VaBillsFan</p>
+<p>Bobarru</p>
+<p>Ginny07</p>
+<p>KennethOfcourse</p>
+<p>I_wil_eat_you</p>
+<p>Jack030201
+<p>Dvyd</p>
+<p>pterippus</p>
+<p>jeroenstr</p>
+<p>4ThDegreeNotch</p>
+<br />
+<div class="rank">Snaga</div>
+<p>phil</p>
+<p>CallanDevastator</p>

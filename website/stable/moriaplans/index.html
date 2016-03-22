@@ -1,0 +1,59 @@
+<html>
+ <head>
+  <title>Moria Plans</title>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+  <script type="text/javascript">
+var originalImage = new Image();
+originalImage.src = "moria.jpg";
+
+var scalingFactor = 1;
+
+$(document).ready(function() {
+	resizeMap();
+});
+
+$(window).mousemove(function(e) {
+	$("#hover").offset({ top: e.pageY+1, left: e.pageX+1 });
+	var minecraftX = Math.round(e.pageX / scalingFactor / 14 * 24 + 2754);
+	var minecraftZ = Math.round(e.pageY / scalingFactor / 14 * 24 - 2899);
+	$("#hover").html("X: " + minecraftX + " | Z: " + minecraftZ);
+}).resize(function() {resizeMap();});
+
+function resizeMap() {
+	var resizeWidthFactor = $(window).outerWidth() / originalImage.width;
+	var resizeHeightFactor = $(window).outerHeight() / originalImage.height;
+	if(resizeWidthFactor < resizeHeightFactor) {
+		$("#mainMap").height("auto").width("100%");
+		scalingFactor = resizeWidthFactor;
+	}
+	else {
+		$("#mainMap").width("auto").height("100%");
+		scalingFactor = resizeHeightFactor;
+	}
+}
+  </script>
+  <style>
+* {
+	padding: 0;
+	margin: 0;
+}
+
+#mainMap {
+	cursor: crosshair;
+}
+
+#hover {
+	border: 2px solid black;
+	background-color: white;
+	border-radius: 2px;
+	position: absolute;
+}
+  </style>
+ </head>
+ <body>
+  <img id="mainMap" src="moria.jpg" alt="Map" title="<div id='tooltipContent'></div>" />
+  <div id="hover"></div>
+ </body>
+</html>

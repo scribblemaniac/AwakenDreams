@@ -1,0 +1,701 @@
+<style type="text/css">
+.tab {
+ position: absolute;
+ z-index: 0;
+}
+
+.tabIcon {
+ z-index: 3;
+ position: absolute;
+}
+
+.slotHilighter {
+ position: absolute;
+ z-index: 3;
+ opacity: 0;
+ background-image: url('resources/images/dataWidget/slotHighlight.png');
+ width: 32px;
+ height: 32px;
+}
+
+.entryItem {
+ z-index: 1;
+ position: absolute;
+}
+
+.entryTitle {
+ color: #FFFFFF;
+}
+
+.entryDV, .entryType {
+ color: #AAAAAA;
+}
+
+.submenu {
+ z-index: 5;
+}
+
+#dWidget, #dWidget_background {
+ width: 390px;
+}
+
+#scrollHandle {
+ position: absolute;
+ z-index: 2;
+}
+
+#scrollBar {
+ position: absolute;
+ width: 24px;
+ height: 220px; 
+}
+
+#searchBox {
+ z-index: 1;
+ position: absolute;
+ top: 73;
+ left: 169;
+ border-style: none;
+ width: 176px;
+ height: 20px;
+ background-color: transparent;
+ font-family: MCDefault;
+ font-size: 16px;
+ color: #ffffff;
+ display: none;
+}
+
+#tooltip {
+ font-family: MCDefault;
+ color: white;
+ position: absolute;
+ top: 0;
+ left: 0;
+ background-color: rgba(16, 1, 16, 0.95);
+ padding: 4px;
+ border: 4px solid transparent;
+ -webkit-border-image: url('resources/images/dataWidget/tooltipBorder.png') 4 4 round;
+ -o-border-image: url('resources/images/dataWidget/tooltipBorder.png') 4 4 round;
+ border-image: url('resources/images/dataWidget/tooltipBorder.png') 4 4 round;
+ border-radius: 10px;
+ z-index: 5;
+ display: none;
+ font-size: 16px;
+}
+
+#dWidget {
+ display: none;
+ margin: 7px;
+ height: 355px;
+}
+
+#dWidget_background {
+ position: absolute;
+ z-index: 1;
+ height: 272px;
+}
+
+#tabInfo {
+ display: none;
+}
+
+#tabTitle {
+ position: absolute;
+ font-family: MCDefault;
+ color: #404040;
+ top: 75;
+ left: 22;
+ z-index: 4;
+ font-size: 16px;
+}
+
+#preload {
+ display: none;
+}
+</style>
+<script type="text/javascript">
+pageAt = 0;
+selectedTab = 0;
+pages = [["tabBlock", "tabDecorations", "tabRedstone", "tabTransport", "tabMisc", "tabFood", "tabTools", "tabCombat", "tabBrewing", "tabMaterials"], ["tabMagic", null, null, null, null, null, null, null, null, null]];
+entryLinks = new Array();
+scrollRow = 0;
+
+startFunction = function() {
+	dWidgetPos = $("#dWidget").position();
+	dWidgetPos.top = Math.abs(dWidgetPos.top);
+	dWidgetPos.left = Math.abs(dWidgetPos.left);
+
+	$("#dWidget_background").css({ left: dWidgetPos.left, top: dWidgetPos.top+56});
+
+	tabs = $(".tab");
+	for(i=0; i < tabs.length; i++) {
+		if(selectedTab == i) {
+			tabSrc = $(tabs[i]).attr("src");
+			if(tabSrc.substring(tabSrc.length-12) != "Selected.png")
+				$(tabs[i]).attr("src", tabSrc.substring(0, tabSrc.length - 4) + "Selected.png").css("z-index", "2");
+		}
+		tabId = Number($(tabs[i]).attr("id").substring($(tabs[i]).attr("id").lastIndexOf('_') + 1));
+		if(isNaN(tabId))
+			continue;
+		isBottom = tabId >= 6;
+		if(tabId > 4) tabId++;
+		if(tabId == 12) tabId++;
+		tabEntry = getTab(i);
+		if((i+1) % 6 == 0 || tabEntry != null) {
+			$(tabs[i]).css({ top: isBottom ? dWidgetPos.top + 320: dWidgetPos.top, left: dWidgetPos.left + ((tabId % 7) * (392 / 7)) }).attr("name", tabEntry);
+			$("#dWidget").append('<img src="resources/images/dataWidget/' + tabEntry + 'Icon.png" id="tab_' + i + '_icon" name="' + tabEntry + '" class="tabIcon" style="top: ' + (isBottom ? dWidgetPos.top + 334: dWidgetPos.top + 16) + '; left: ' + (dWidgetPos.left + (tabId % 7) * (392 / 7) + 11) + ';" />');
+		}
+		else {
+			$(tabs[i]).css("display", "none");
+		}
+	}
+	$(".tab").click(function() {
+		setSelected($(this).attr("id"));
+		if($(this).attr("id") == "tab_5") {
+			$("#searchBox").show();
+			$("#dWidget_background").attr("src", "resources/images/dataWidget/searchBackground.png");
+		}
+		else {
+			$("#searchBox").hide();
+			$("#searchBox").val("");
+			$("#dWidget_background").attr("src", "resources/images/dataWidget/background.png");
+		}
+	});
+	$(".tabIcon").click(function() {
+		var id = $(this).attr("id");
+		setSelected(id.substring(0, id.length - 5));
+		if(id == "tab_5_icon") {
+			$("#searchBox").show();
+			$("#dWidget_background").attr("src", "resources/images/dataWidget/searchBackground.png");
+		}
+		else {
+			$("#searchBox").hide();
+			$("#searchBox").val("");
+			$("#dWidget_background").attr("src", "resources/images/dataWidget/background.png");
+		}
+	});
+	$(".tab").mousemove(function(e) { $("#tooltip").css({ top: e.pageY - 1 - $("#tooltip").outerHeight(), left: e.pageX + 1 }); });
+	$(".tabIcon").mousemove(function(e) { $("#tooltip").css({ top: e.pageY - 1 - $("#tooltip").outerHeight(), left: e.pageX + 1 }); });
+	$(".tab").mouseenter(function(e) { var id = Number($(this).attr("id").substring(4)); $("#tooltip").html($("#" + (id == 5 ? "tabAllSearch" : id == 11 ? "tabInventory" : pages[pageAt][id - (id > 5 ? 1 : 0)])).attr("title")).show(); });
+	$(".tab").mouseleave(function(e) { $("#tooltip").hide(); });
+	$(".tabIcon").mouseenter(function(e) { $("#tooltip").html($("#" + $(this).attr("name")).attr("title")).show(); });
+	$(".tabIcon").mouseleave(function(e) { $("#tooltip").hide(); });
+
+	for(i=0;i<5;i++) {
+		for(j=0;j<9;j++) {
+			$("#dWidget").append('<div class="slotHilighter" x="' + j + '" y="' + i + '" style="top: ' + (dWidgetPos.top + 92 + i * 36) + ';left: ' + (dWidgetPos.left + 18 + j * 36) + ';">&nbsp;</div>');
+		}
+	}
+	for(i=0;i<9;i++) {
+		$("#dWidget").append('<div class="slotHilighter" x="' + i + '" y="5" style="top: ' + (dWidgetPos.top + 280) + ';left: ' + (dWidgetPos.left + 18 + i * 36) + ';">&nbsp;</div>');
+	}
+	$(".slotHilighter").mousemove(function(e) { $("#tooltip").css({ top: e.pageY - $("#tooltip").outerHeight(), left: e.pageX + 14 }); });
+	$(".slotHilighter").mouseenter(function(e) { $(this).css("opacity", "0.5"); entryLink  = entryLinks[Number($(this).attr("x")) + Number($(this).attr("y")) * 9]; if(entryLink == null) return; entry = $("#" + entryLink); $("#tooltip").html('<span class="entryTitle">' + $(entry).attr("name") + '</span><br /><span class="entryType">Type:&nbsp;' + $(entry).attr("type").substring(0, 1).toUpperCase() + $(entry).attr("type").substring(1) + '</span><br /><span class="entryDV">Data Value:&nbsp;' + $(entry).attr("dv") + "</span>"); if($(entry).attr("name") != null) { $("#tooltip").show(); } });
+	$(".slotHilighter").mouseleave(function(e) { $(this).css("opacity", "0"); $("#tooltip").hide(); });
+
+	tabEntries = $("#tabInfo span");
+	for(i=0;i<tabEntries.length;i++) {
+		$("#preload").append('<img src="resources/images/' + $(tabEntries[i]).attr("type") + "s/" + ($(tabEntries[i]).attr("src") == null ? $(tabEntries[i]).attr("id").substring(6) + ".png" : $(tabEntries[i]).attr("src")) + '" />');
+	}
+
+console.log("leow");
+	for(i=0;i<5;i++) {
+		for(j=0;j<9;j++) {
+			$("#dWidget").append('<img src="resources/images/dataWidget/blankSlot.png" class="entryItem" style="top: ' + (dWidgetPos.top + 92 + i * 36) + ';left: ' + (dWidgetPos.left + 18 + j * 36) + ';"/>');
+		}
+	}
+	for(i=0;i<9;i++) {
+		$("#dWidget").append('<img src="resources/images/dataWidget/blankSlot.png" class="entryItem" style="top: ' + (dWidgetPos.top + 280) + ';left: ' + (dWidgetPos.left + 18 + i * 36) + ';"/>');
+	}
+	updateEntries();
+
+	$("#tabTitle").css({ top: dWidgetPos.top + 66, left: dWidgetPos.left + 16 });
+
+	$("#searchBox").val("");
+	$("#searchBox").keydown(function(event) { if(event.which == 13) event.preventDefault(); });
+	$("#searchBox").keyup(function() {
+		searchVal = $(this).val().toLowerCase();
+		htmlResults = "";
+		if(searchVal == "") {
+			$("#tabAllSearch").html(htmlResults);
+			updateEntries();
+			return;
+		}
+		i = 0;
+		while(pages[pageAt][i] != null) {
+			entries = $("#" + pages[pageAt][i] + " span");
+			for(j=0;j<entries.length;j++) {
+				// TODO Compress this with a regex 
+				if($(entries[j]).attr("name").toLowerCase().indexOf(searchVal) == 0 || $(entries[j]).attr("name").toLowerCase().indexOf(" " + searchVal) > -1 || $(entries[j]).attr("dv").indexOf(searchVal) > -1)
+					htmlResults += entries[j].outerHTML;
+			}
+			i++;
+		}
+		$("#tabAllSearch").html(htmlResults);
+		updateEntries();
+	});
+
+	$("#scrollBar").css({ top: dWidgetPos.top + 92, left: dWidgetPos.left + 350 });
+	$("#scrollHandle").css({ top: dWidgetPos.top + 92, left: dWidgetPos.left + 350 });
+	$("#scrollHandle").draggable({ axis: "y", containment: $("#scrollBar"), start: function(e) { if($(this).attr("disabled") != null) e.preventDefault(); }, drag: function() { scrollIt(); } });
+	$('#dWidget').on('DOMMouseScroll mousewheel', function (e) { $("#scrollHandle").css("top", Math.max($("#scrollBar").position().top, Math.min($("#scrollBar").position().top + $("#scrollBar").height() - $("#scrollHandle").height(), $("#scrollHandle").position().top + ((e.originalEvent.wheelDeltaY != null ? e.originalEvent.wheelDeltaY : e.originalEvent.detail) * (($("#scrollBar").height() - 29) / Math.ceil(($("#" + getTab(selectedTab) + " span").length - 1) / 9 - 4)))))); scrollIt(); });
+
+	$("#dWidget").show("fade");
+};
+
+function scrollIt() {
+	numEntries = $("#" + getTab(selectedTab) + " span").length;
+	prevScrollRow = scrollRow;
+	scrollRow = Math.floor(($("#scrollHandle").position().top - $("#scrollBar").position().top) / (($("#scrollBar").height() - 29) / Math.ceil((numEntries + 1) / 9 - 4)));
+	if(prevScrollRow != scrollRow) updateEntries();
+}
+
+function setSelected(id) {
+	tabSrc = $("#tab_" + selectedTab).attr("src");
+	$("#tab_" + selectedTab).attr("src", tabSrc.substring(0, tabSrc.length - 12) + ".png").css("z-index", "0");
+	selectedTab = Number(id.substring(id.lastIndexOf('_') + 1));
+	tabSrc =  $("#" + id).attr("src");
+	$("#" + id).attr("src", tabSrc.substring(0, tabSrc.length - 4) + "Selected.png").css("z-index", "2");
+	$("#tabTitle").html($("#" + getTab(selectedTab)).attr("title"));
+	scrollRow = 0;
+	$("#scrollHandle").css({ top: dWidgetPos.top + 92, left: dWidgetPos.left + 350 });
+	updateEntries();
+}
+
+function updateEntries() {
+	imageSlots = $(".entryItem");
+	tabEntries = $("#" + getTab(selectedTab) + " span");
+	for(i=0;i<imageSlots.length - 9;i++) {
+		slotAt = i + scrollRow * 9;
+		if(tabEntries[slotAt] == null) {
+			$(imageSlots[i]).attr("src", "resources/images/dataWidget/blankSlot.png");
+			entryLinks[i] = null;
+			continue;
+		}
+		$(imageSlots[i]).attr("src", "resources/images/" + $(tabEntries[slotAt]).attr("type") + "s/" + ($(tabEntries[slotAt]).attr("src") == null ? $(tabEntries[slotAt]).attr("id").substring(6) + ".png" : $(tabEntries[slotAt]).attr("src")));
+		entryLinks[i] = $(tabEntries[slotAt]).attr("id");
+	}
+	if(tabEntries.length < 45) {
+		$("#scrollHandle").attr("disabled", "disabled").attr("src", "resources/images/dataWidget/scrollHandleDisabled.png");
+	}
+	else {
+		$("#scrollHandle").removeAttr("disabled").attr("src", "resources/images/dataWidget/scrollHandle.png");
+	}
+}
+
+function getTab(selTab) {
+	return selTab == 5 ? "tabAllSearch" : selTab == 11 ? "tabInventory" : pages[pageAt][selTab - (selTab > 5 ? 1 : 0)];
+}
+</script>
+<div id="dWidget">
+   <img id="tab_0" src="resources/images/dataWidget/tabTopLeft.png" class="tab" />
+   <img id="tab_1" src="resources/images/dataWidget/tabTop.png" class="tab" />
+   <img id="tab_2" src="resources/images/dataWidget/tabTop.png" class="tab" />
+   <img id="tab_3" src="resources/images/dataWidget/tabTop.png" class="tab" />
+   <img id="tab_4" src="resources/images/dataWidget/tabTop.png" class="tab" />
+   <img id="tab_5" src="resources/images/dataWidget/tabTopRight.png" class="tab" />
+   <img id="dWidget_background" src="resources/images/dataWidget/background.png" />
+   <img id="tab_6" src="resources/images/dataWidget/tabBottomLeft.png" class="tab" />
+   <img id="tab_7" src="resources/images/dataWidget/tabBottom.png" class="tab" />
+   <img id="tab_8" src="resources/images/dataWidget/tabBottom.png" class="tab" />
+   <img id="tab_9" src="resources/images/dataWidget/tabBottom.png" class="tab" />
+   <img id="tab_10" src="resources/images/dataWidget/tabBottom.png" class="tab" />
+   <img id="tab_11" src="resources/images/dataWidget/tabBottomRight.png" class="tab" />
+   <div id="scrollBar"></div>
+   <img id="scrollHandle" src="resources/images/dataWidget/scrollHandle.png" disabled="false" />
+   <input type="text" id="searchBox" />
+   <div id="tabTitle">Building Blocks</div>
+   <span id="tabInfo">
+    <!--<span type="block" name="" dv="" id="entry_"></span>-->
+    <!--<span type="item" name="" dv="" id="entry_"></span>-->
+    <div title="Building Blocks" id="tabBlock">
+     <span type="block" name="Jade Ore" dv="500" id="entry_oreGreen"></span>
+     <span type="block" name="Amber Ore" dv="501" id="entry_oreYellow"></span>
+     <span type="block" name="Tanzanite Ore" dv="502" id="entry_oreBlue"></span>
+     <span type="block" name="Permanent Dirt" dv="503" id="entry_permanentDirt"></span>
+     <span type="block" name="Amethyst Ore" dv="506" id="entry_orePurple"></span>
+     <span type="block" name="Ruby Ore" dv="507" id="entry_oreRed"></span>
+     <span type="block" name="Onyx Ore" dv="508" id="entry_oreBlack"></span>
+     <span type="block" name="Moonstone Ore" dv="509" id="entry_oreGrey"></span>
+     <span type="block" name="Quartz Ore" dv="510" id="entry_oreWhite"></span>
+     <span type="block" name="Minas Morgul Glowstone" dv="511" id="entry_minasMorgulGlow"></span>
+     <span type="block" name="Aragonath Stone" dv="512" id="entry_aragonathStone"></span>
+     <span type="block" name="Block of Mithril" dv="513" id="entry_mithrilBlock"></span>
+     <span type="block" name="Crystal Ore" dv="516" id="entry_crystalOre"></span>
+     <span type="block" name="Desert Road Block" dv="517" id="entry_roadDesert"></span>
+     <span type="block" name="Dirt Road Block" dv="518" id="entry_roadDirt"></span>
+     <span type="block" name="Light Blue Glowstone" dv="519" id="entry_lightBlueGlow"></span>
+     <span type="block" name="Black Iron" dv="520" id="entry_blackIron"></span>
+     <span type="block" name="Moria Pillar Stone" dv="521" id="entry_moriaPillarStone"></span>
+     <span type="block" name="Rusty Iron" dv="522" id="entry_rustyIron"></span>
+     <span type="block" name="Elf Floor" dv="523" id="entry_elfFloor"></span>
+     <span type="block" name="Gondorian Floor" dv="524" id="entry_gondorianFloor"></span>
+     <span type="block" name="Stone Floor" dv="525" id="entry_stoneFloor"></span>
+     <span type="block" name="Palm Leaves" dv="531" id="entry_palmLeaves"></span>
+     <span type="block" name="Palm Log" dv="532" id="entry_palmLog"></span>
+     <span type="block" name="Smooth Stone" dv="534" id="entry_silkStone"></span>
+     <span type="block" name="Cracked Smooth Stone" dv="535" id="entry_crackedSilkStone"></span>
+     <span type="block" name="Hay" dv="536" id="entry_straw"></span>
+     <span type="block" name="Cracked Earth" dv="537" id="entry_crackedEarth"></span>
+     <span type="block" name="Bag End Floor" dv="538" id="entry_bagEndFloor"></span>
+     <span type="block" name="Bag End Wall" dv="539" id="entry_bagEndWall"></span>
+     <span type="block" name="Brown Stone" dv="540" id="entry_brownStone"></span>
+     <span type="block" name="Mordor Stone" dv="541" id="entry_mordorStone"></span>
+     <span type="block" name="Cliff Block" dv="542" id="entry_cliffBlock"></span>
+     <span type="block" name="Spider Egg" dv="543" id="entry_spiderEgg"></span>
+     <span type="block" name="Lamp" dv="551" id="entry_lamp"></span>
+     <span type="block" name="Gondorian Stone" dv="552" id="entry_whiteStone"></span>
+     <span type="block" name="Gondorian Brick Stone" dv="553" id="entry_whiteBrickStone"></span>
+     <span type="block" name="Cracked Gondorian Brick Stone" dv="554" id="entry_whiteCrackedBrickStone"></span>
+     <span type="block" name="Lorien Lamp" dv="555" id="entry_lorienLamp"></span>
+     <span type="block" name="Bucklebury Lamp" dv="556" id="entry_buckleburyLamp"></span>
+     <span type="block" name="Salt Ore" dv="557" id="entry_saltOre"></span>
+     <span type="block" name="Dark Metal" dv="561" id="entry_darkMetal"></span>
+     <span type="block" name="Rivendell Woood" dv="562" id="entry_rivendellWood"></span>
+     <span type="block" name="Moss" dv="563" id="entry_moss"></span>
+     <span type="block" name="Gondorian Roof" dv="564" id="entry_gondorianRoof"></span>
+     <span type="block" name="Rivendell Roof" dv="565" id="entry_rivendellRoof"></span>
+     <span type="block" name="Mossy Gondorian Brick Stone" dv="566" id="entry_mossyWhiteBrickStone"></span>
+     <span type="block" name="Rohan Bricks" dv="569" id="entry_rohanBricks"></span>
+     <span type="block" name="Mordor Brick Stone" dv="570" id="entry_mordorBrickstone"></span>
+     <span type="block" name="Mithril Ore" dv="571" id="entry_mithrilOre"></span>
+     <span type="block" name="Numenorean" dv="574" id="entry_numenorean"></span>
+     <span type="block" name="Dwarf Inner Wall Decoration" dv="575" id="entry_dwarfInnerWallDecoration"></span>
+     <span type="block" name="Dale Stone" dv="576" id="entry_daleStone"></span>
+     <span type="block" name="Dwarf Inner Wall Stone" dv="577" id="entry_dwarfInnerWallStone"></span>
+     <span type="block" name="Red Lapis" dv="578" id="entry_redLapis"></span>
+     <span type="block" name="Purple Lapis" dv="579" id="entry_purpleLapis"></span>
+     <span type="block" name="Light Blue Lapis" dv="580" id="entry_lightBlueLapis"></span>
+     <span type="block" name="Green Lapis" dv="581" id="entry_greenLapis"></span>
+     <span type="block" name="Dwarf Wall" dv="582" id="entry_dwarfWall"></span>
+     <span type="block" name="Brown Lapis" dv="583" id="entry_brownLapis"></span>
+     <span type="block" name="Dwarf Floor" dv="584" id="entry_dwarfFloor"></span>
+     <span type="block" name="Dwarven Hall Floor" dv="585" id="entry_dwarvenHallFloor"></span>
+     <span type="block" name="Dwarf Stone" dv="586" id="entry_dwarfStone"></span>
+     <span type="block" name="Rohan Gold" dv="588" id="entry_rohanGold"></span>
+     <span type="block" name="Rohan Iron" dv="589" id="entry_rohanIron"></span>
+     <span type="block" name="Dark Dwarf Stone" dv="590" id="entry_darkDwarfStone"></span>
+     <span type="block" name="Medium Dark Dwarf Stone" dv="591" id="entry_mediumDarkDwarfStone"></span>
+     <span type="block" name="Mud Block" dv="592" id="entry_mudBlock"></span>
+     <span type="block" name="Gondorian Brickstone Stairs" dv="593" id="entry_whiteBrickStoneStairs"></span>
+     <span type="block" name="Light Brown Wood" dv="594" id="entry_lightBrownWood"></span>
+     <span type="block" name="Old Tree" dv="595" id="entry_oldTree"></span>
+     <span type="block" name="Bree Bookshelf" dv="596" id="entry_breeBookshelf"></span>
+     <span type="block" name="Cross Hay" dv="597" id="entry_crossHay"></span>
+     <span type="block" name="Light Grey Circle Stone" dv="598" id="entry_lightGreyCircleStone"></span>
+     <span type="block" name="Hobbit Lamp 1" dv="599" id="entry_hobbitLamp1"></span>
+     <span type="block" name="Hobbit Lamp 2" dv="600" id="entry_hobbitLamp2"></span>
+     <span type="block" name="Lossarnarch Decoration Stone" dv="601" id="entry_lossarnarchDecorationStone"></span>
+     <span type="block" name="Bree Lamp" dv="602" id="entry_breeLamp"></span>
+     <span type="block" name="Archet Lamp" dv="603" id="entry_archetLamp"></span>
+     <span type="block" name="Gondorian Brickstone Slab" dv="604" id="entry_whiteBrickStoneSlab"></span>
+     <span type="block" name="Town Marker" dv="606" id="entry_townMarker"></span>
+     <span type="block" name="Village Marker" dv="607" id="entry_villageMarker"></span>
+     <span type="block" name="Ruin Marker" dv="608" id="entry_ruinMarker"></span>
+     <span type="block" name="Elven Stone Floor" dv="609" id="entry_elvenStoneFloor"></span>
+     <span type="block" name="Ancient Stone" dv="610" id="entry_ancientStone"></span>
+     <span type="block" name="Bree Stone Bricks" dv="611" id="entry_breeStoneBricks"></span>
+     <span type="block" name="Cracked Bree Stone Bricks" dv="612" id="entry_crackedBreeStoneBricks"></span>
+     <span type="block" name="Mossy Bree Stone Bricks" dv="613" id="entry_mossyBreeStoneBricks"></span>
+     <span type="block" name="Shire Hay" dv="614" id="entry_shireHay"></span>
+     <span type="block" name="Bree Oak Wood Planks" dv="615" id="entry_breeOakPlanks"></span>
+     <span type="block" name="Bree Spruce Wood Planks" dv="616" id="entry_breeSprucePlanks"></span>
+     <span type="block" name="Bree Birch Wood Planks" dv="617" id="entry_breeBirchPlanks"></span>
+     <span type="block" name="Bree Jungle Wood Planks" dv="618" id="entry_breeJunglePlanks"></span>
+     <span type="block" name="Shire Path" dv=""619 id="entry_shirePath"></span>
+     <span type="block" name="Bree Floor" dv="620" id="entry_breeFloor"></span>
+     <span type="block" name="Arnor Floor" dv="621" id="entry_arnorFloor"></span>
+     <span type="block" name="Cardolan Brick Stone" dv="622" id="entry_cardolanBrickstone"></span>
+     <span type="block" name="Elven Sandstone Floor" dv="623" id="entry_elvenSandStoneFloor"></span>
+     <span type="block" name="Dead Lava" dv="624" id="entry_deadLava"></span>
+     <span type="block" name="Chiseled White Stone" dv="625" id="entry_chiseledWhiteStone"></span>
+     <span type="block" name="Needles" dv="626" id="entry_needles"></span>
+     <span type="block" name="Rhun Floor" dv="627" id="entry_rhunFloor"></span>
+     <span type="block" name="Khand Floor" dv="628" id="entry_khandFloor"></span>
+     <span type="block" name="City Marker" dv="631" id="entry_cityMarker"></span>
+     <span type="block" name="Rivendell Floor" dv="632" id="entry_rivendellFloor"></span>
+     <span type="block" name="Column" dv="633" id="entry_column"></span>
+     <span type="block" name="Column Top" dv="634" id="entry_columnTop"></span>
+     <span type="block" name="Dwarf Bricks" dv="635" id="entry_dwarfBricks"></span>
+     <span type="block" name="Dwarf Floor 2" dv="636" id="entry_dwarfFloor2"></span>
+     <span type="block" name="Dwarf Floor 3" dv="637" id="entry_dwarfFloor3"></span>
+     <span type="block" name="Dwarf Floor 4" dv="638" id="entry_dwarfFloor4"></span>
+     <span type="block" name="Dwarf Floor 5" dv="639" id="entry_dwarfFloor5"></span>
+     <span type="block" name="Dwarf Floor 6" dv="640" id="entry_dwarfFloor6"></span>
+     <span type="block" name="Dwarf Floor 7" dv="641" id="entry_dwarfFloor7"></span>
+     <span type="block" name="Dwarf Floor 8" dv="642" id="entry_dwarfFloor8"></span>
+     <span type="block" name="Dwarf Floor 9" dv="643" id="entry_dwarfFloor9"></span>
+     <span type="block" name="Dwarf King Stone" dv="644" id="entry_dwarfKingStone"></span>
+     <span type="block" name="Dwarf King Floor" dv="645" id="entry_dwarfKingFloor"></span>
+     <span type="block" name="Dwarf King Floor 2" dv="646" id="entry_dwarfKingFloor2"></span>
+     <span type="block" name="Dwarven Pillar Decoration" dv="647" id="entry_dwarvenPillarDecoration"></span>
+     <span type="block" name="Dwarven Steel" dv="648" id="entry_dwarvenSteel"></span>
+     <span type="block" name="Erebor Floor" dv="649" id="entry_ereborFloor"></span>
+     <span type="block" name="Erebor Floor 2" dv="650" id="entry_ereborFloor2"></span>
+     <span type="block" name="Ered Luin Stone" dv="651" id="entry_eredLuinStone"></span>
+     <span type="block" name="Iron Hills Floor" dv="652" id="entry_ironHillsFloor"></span>
+     <span type="block" name="Smooth Gold" dv="653" id="entry_smoothGold"></span>
+     <span type="block" name="Rivendell Wall" dv="654" id="entry_rivendellWall"></span>
+     <span type="block" name="Sindar Stone" dv="655" id="entry_sindarStone"></span>
+     <span type="block" name="Sindar Floor" dv="656" id="entry_sindarFloor"></span>
+     <span type="block" name="Sindar Floor 2" dv="657" id="entry_sindarFloor2"></span>
+     <span type="block" name="Sindar Decoration Stone" dv="658" id="entry_sindarDecorationStone"></span>
+     <span type="block" name="Noldor Floor" dv="659" id="entry_noldorFloor"></span>
+     <span type="block" name="Noldor Sandstone Floor" dv="660" id="entry_noldorSandstoneFloor"></span>
+     <span type="block" name="Mallorn Woodplanks" dv="661" id="entry_mallornWoodplanks"></span>
+     <span type="block" name="Lindon Wood" dv="662" id="entry_lindonWood"></span>
+     <span type="block" name="Lindon Wall Decoration" dv="663" id="entry_lindonWallDecoration"></span>
+     <span type="block" name="High Elf Wall" dv="664" id="entry_highElfWall"></span>
+     <span type="block" name="Harlindon Wood" dv="665" id="entry_harlindonWood"></span>
+     <span type="block" name="Forlond Floor" dv="666" id="entry_forlondFloor"></span>
+     <span type="block" name="Forlindon Wood" dv="667" id="entry_forlindonWood"></span>
+     <span type="block" name="Forlindon Wall" dv="668" id="entry_forlindonWall"></span>
+     <span type="block" name="Elven Stonewall" dv="669" id="entry_elvenStonewall"></span>
+     <span type="block" name="Elven Nobel Wall" dv="670" id="entry_elvenNobelWall"></span>
+     <span type="block" name="Rivendell Statue Bottom" dv="671" id="entry_rivendellStatueBottom"></span>
+     <span type="block" name="Elven Decoration" dv="672" id="entry_elvenDecoration"></span>
+     <span type="block" name="Elven Decoration Light" dv="673" id="entry_elvenDecorationLight"></span>
+     <span type="block" name="Elven Decoration 2" dv="674" id="entry_elvenDecoration2"></span>
+     <span type="block" name="Elven Decoration 3" dv="675" id="entry_elvenDecoration3"></span>
+     <span type="block" name="Hobbit Floor" dv="676" id="entry_hobbitFloor"></span>
+     <span type="block" name="Hobbit Floor 2" dv="677" id="entry_hobbitFloor2"></span>
+     <span type="block" name="Dark Bricks" dv="678" id="entry_darkBricks"></span>
+     <span type="block" name="Rohirrim Crossbeam" dv="679" id="entry_rohirrimCrossbeam"></span>
+     <span type="block" name="Crossbeam" dv="680" id="entry_crossbeam"></span>
+     <span type="block" name="Crossbeam 2" dv="681" id="entry_crossbeam2"></span>
+     <span type="block" name="Crossbeam 3" dv="682" id="entry_crossbeam3"></span>
+     <span type="block" name="Standard Crossbeam" dv="683" id="entry_standardCrossbeam"></span>
+     <span type="block" name="Standard Crossbeam 2" dv="684" id="entry_standardCrossbeam2"></span>
+     <span type="block" name="Standard Crossbeam 3" dv="685" id="entry_standardCrossbeam3"></span>
+     <span type="block" name="Vertical Beam" dv="686" id="entry_verticleBeam"></span>
+     <span type="block" name="Vertical Horizontal Beam" dv="687" id="entry_verticleHorizontalBeam"></span>
+     <span type="block" name="Dale Sandstone" dv="689" id="entry_daleSandstone"></span>
+     <span type="block" name="Dale Tiles" dv="690" id="entry_daleTiles"></span>
+     <span type="block" name="Dale Wall" dv="691" id="entry_daleWall"></span>
+     <span type="block" name="Harad Sandstone Floor" dv="692" id="entry_haradSandstoneFloor"></span>
+     <span type="block" name="Harad Stonebricks" dv="693" id="entry_haradStonebricks"></span>
+     <span type="block" name="Sandstone Floor" dv="694" id="entry_sandfloor"></span>
+     <span type="block" name="Umbar Haven Floor" dv="695" id="entry_umbarHavenFloor"></span>
+     <span type="block" name="Umbar Stonebricks" dv="696" id="entry_umbarStonebricks"></span>
+     <span type="block" name="Umbar Wall Decoration" dv="697" id="entry_umbarWallDecoration"></span>
+     <span type="block" name="Khand Stonebricks" dv="698" id="entry_khandStonebricks"></span>
+     <span type="block" name="Brown Bricks" dv="699" id="entry_brownBricks"></span>
+     <span type="block" name="Edoras Cobblestone" dv="700" id="entry_edorasCobblestone"></span>
+     <span type="block" name="Reinforced Wood" dv="701" id="entry_reinforcedWood"></span>
+     <span type="block" name="Meduseld Wood" dv="702" id="entry_meduseldWood"></span>
+     <span type="block" name="Rohirrim Wall Decoration" dv="703" id="entry_rohirrimWallDecoration"></span>
+     <span type="block" name="Statue Head" dv="704" id="entry_statueHead"></span>
+     <span type="block" name="Rohirrim Oak Wood Planks" dv="705" id="entry_rohirrimOakWoodPlanks"></span>
+     <span type="block" name="Rohirrim Spruce Wood Planks" dv="706" id="entry_rohirrimSpruceWoodPlanks"></span>
+     <span type="block" name="Rohirrim Birch Wood Planks" dv="707" id="entry_rohirrimBirchWoodPlanks"></span>
+     <span type="block" name="Rohirrim Jungle Wood Planks" dv="708" id="entry_rohirrimJungleWoodPlanks"></span>
+     <span type="block" name="Angmar Floor" dv="709" id="entry_angmarFloor"></span>
+     <span type="block" name="Angmar Bricks" dv="710" id="entry_angmarBricks"></span>
+     <span type="block" name="Beorning Wood" dv="711" id="entry_beorningWood"></span>
+     <span type="block" name="Annuminas Decoration" dv="712" id="entry_annuminasDecoration"></span>
+     <span type="block" name="Arnor Decoration Jewel" dv="713" id="entry_arnorDecorationJewel"></span>
+     <span type="block" name="Arnorian Bricks" dv="714" id="entry_arnorianBricks"></span>
+     <span type="block" name="Minas Tirith Floor" dv="715" id="entry_minasTirithFloor"></span>
+     <span type="block" name="Pelargir Stone" dv="716" id="entry_pelargirStone"></span>
+     <span type="block" name="White Cobblestone" dv="717" id="entry_whiteCobblestone"></span>
+     <span type="block" name="Dunland Totem" dv="718" id="entry_dunlandTotem"></span>
+     <span type="block" name="Dunland Wall Decoration" dv="719" id="entry_dunlandWallDecoration"></span>
+     <span type="block" name="Mordor Lamp" dv="724" id="entry_mordorLamp"></span>
+     <span type="block" name="Harad Light" dv="725" id="entry_haradLight"></span>
+     <span type="block" name="Elven Lamp" dv="726" id="entry_elvenLamp"></span>
+     <span type="block" name="Carn Dum Lamp" dv="727" id="entry_carnDumLamp"></span>
+     <span type="block" name="Bree Tile" dv="731" id="entry_breeTile"></span>
+     <span type="block" name="Bree Tile Stairs" dv="732" id="entry_breeTileStairs"></span>
+     <span type="block" name="Bree Tile Slab" dv="733" id="entry_breeTileSlab"></span>
+     <span type="block" name="Numenorean Stairs" dv="734" id="entry_numenoreanStairs"></span>
+     <span type="block" name="Numenorean Slab" dv="735" id="entry_numenoreanSlab"></span>
+    </div>
+    <div title="Decoration Blocks" id="tabDecorations">
+     <span type="block" name="Luindol" dv="504" id="entry_luindol"></span>
+     <span type="block" name="Hopper" dv="505" id="entry_hopper"></span>
+     <span type="block" name="Palm Sapling" dv="533" id="entry_palmSapling"></span>
+     <span type="block" name="Bakruel" dv="544" id="entry_bakruel"></span>
+     <span type="block" name="Hopperfoot" dv="545" id="entry_hopperfoot"></span>
+     <span type="block" name="Madarch" dv="546" id="entry_madarch"></span>
+     <span type="block" name="Mehas" dv="547" id="entry_mehas"></span>
+     <span type="block" name="Arfandas" dv="548" id="entry_arfandas"></span>
+     <span type="block" name="Athelas" dv="549" id="entry_athelas"></span>
+     <span type="block" name="Bellis" dv="550" id="entry_bellis"></span>
+     <span type="block" name="Simbelmyne" dv="558" id="entry_simbelmyne"></span>
+     <span type="block" name="Bree Glass" dv="559" id="entry_breeGlass"></span>
+     <span type="block" name="Shire Flower" dv="560" id="entry_shireFlower"></span>
+     <span type="block" name="Window" dv="568" id="entry_window"></span>
+     <span type="block" name="Bree Glass Pane" dv="572" id="entry_breeGlassPane"></span>
+     <span type="block" name="Arlans Slipper" dv="573" id="entry_arlansSlipper"></span>
+     <span type="block" name="Dwarven Torch" dv="587" id="entry_dwarvenTorch"></span>
+     <span type="block" name="Hobbit Window" dv="629" id="entry_hobbitWindow"></span>
+     <span type="block" name="Mirkwood Web" dv="720" id="entry_mirkwoodWeb"></span>
+     <span type="block" name="Dale Window" dv="721" id="entry_daleWindow"></span>
+     <span type="block" name="Dale Window 2" dv="722" id="entry_daleWindow2"></span>
+     <span type="block" name="Harad Window" dv="723" id="entry_haradWindow"></span>
+     <span type="item" name="Blue Bed" dv="6052" id="entry_blueBedItem"></span>
+     <span type="item" name="Brown Bed" dv="6053" id="entry_brownBedItem"></span>
+     <span type="item" name="Green Bed" dv="6241" id="entry_greenBedItem"></span>
+    </div>
+    <div title="Redstone" id="tabRedstone">
+     <span type="block" name="Moria Trapdoor" dv="526" id="entry_moriaTrapdoor"></span>
+     <span type="block" name="Bree Door" dv="527" id="entry_breeDoor"></span>
+     <span type="block" name="Dwarf Door" dv="567" id="entry_dwarfDoor"></span>
+     <span type="block" name="Elven Door" dv="728" id="entry_elvenDoor"></span>
+     <span type="block" name="Human Door" dv="729" id="entry_humanDoor"></span>
+    </div>
+    <div title="Transportation" id="tabTransport">
+     
+    </div>
+    <div title="Miscellaneous" id="tabMisc">
+     <span type="item" name="Tobacco" dv="6004" id="entry_tobacco"></span>
+     <span type="item" name="Requiem for a Dream (Music Disc)" dv="6006" id="entry_requiem"></span>
+     <span type="item" name="Parchment" dv="6010" id="entry_parchment"></span>
+     <span type="item" name="Evenstar (Music Disc)" dv="6011" id="entry_evenstar"></span>
+     <span type="item" name="The Bridge of Khazad Dum (Music Disc)" dv="612" id="entry_khazad"></span>
+     <span type="item" name="Isengard Unleased (Music Disc)" dv="6013" id="entry_isengard"></span>
+     <span type="item" name="Horn of Gondor" dv="6039" id="entry_gondorHorn"></span>
+     <span type="item" name="Into the West (Music Disc)" dv="6083" id="entry_intoWest"></span>
+     <span type="item" name="May It Be (Music Disc)" dv="6084" id="entry_mayItBe"></span>
+     <span type="item" name="Southern Star" dv="6097" id="entry_southernStar"></span>
+     <span type="item" name="Southlinch" dv="6098" id="entry_southlinch"></span>
+     <span type="item" name="Gondorian Tobacco" dv="6099" id="entry_gondorianTobacco"></span>
+     <span type="item" name="Longbottom Leaf" dv="6100" id="entry_longbottomLeaf"></span>
+     <span type="item" name="Old Toby" dv="6101" id="entry_oldToby"></span>
+     <span type="item" name="A Knife in the Dark (Music Disc)" dv="6238" id="entry_knifeInTheDark"></span>
+    </div>
+    <div title="Search Items" id="tabAllSearch">
+     
+    </div>
+    <div title="Food" id="tabFood">
+     <span type="item" name="Lembas" dv="6000" id="entry_lembas"></span>
+     <span type="item" name="Tomato" dv="6022" id="entry_tomato"></span>
+     <span type="item" name="Nuts" dv="6029" id="entry_nuts"></span>
+     <span type="item" name="Corn Cob" dv="6032" id="entry_cornCob"></span>
+     <span type="item" name="Berries" dv="6038" id="entry_berries"></span>
+     <span type="item" name="Cram" dv="6058" id="entry_cram"></span>
+     <span type="item" name="Cabbage" dv="6059" id="entry_cabbage"></span>
+     <span type="item" name="Coconut" dv="6060" id="entry_coconut"></span>
+     <span type="item" name="Raw Deer Meat" dv="6061" id="entry_rawDeerMeat"></span>
+     <span type="item" name="Cooked Deer Meat" dv="6062" id="entry_cookedDeerMeat"></span>
+     <span type="item" name="Muffin" dv="6063" id="entry_muffin"></span>
+     <span type="item" name="Strawberry" dv="6064" id="entry_strawberry"></span>
+     <span type="item" name="Strawberry Muffin" dv="6065" id="entry_strawberryMuffin"></span>
+     <span type="item" name="Orange" dv="6066" id="entry_orange"></span>
+     <span type="item" name="Orange Muffin" dv="6067" id="entry_orangeMuffin"></span>
+     <span type="item" name="Pear" dv="6068" id="entry_pear"></span>
+     <span type="item" name="Raw Meat" dv="6069" id="entry_rawMeat"></span>
+     <span type="item" name="Cooked Meat" dv="6070" id="entry_cookedMeat"></span>
+    </div>
+    <div title="Tools" id="tabTools">
+     <span type="item" name="Telescope" dv="6080" id="entry_telescope"></span>
+    </div>
+    <div title="Combat" id="tabCombat">
+     <span type="item" name="Flaming Arrow" dv="6005" id="entry_flamingArrow"></span>
+     <span type="item" name="Uruk Sword" dv="6020" id="entry_urukSwordDull"></span>
+     <span type="item" name="Herugrim" dv="6028" id="entry_herugrim"></span>
+     <span type="item" name="Knife" dv="6036" id="entry_knife"></span>
+     <span type="item" name="Hobbit Hat" dv="6054" id="entry_hobbitHat"></span>
+     <span type="item" name="Orc Helm" dv="6055" id="entry_orcHelm"></span>
+     <span type="item" name="Rohan Helm" dv="6070" id="entry_rohanHelm1"></span>
+     <span type="item" name="Rohan Helm" dv="6071" id="entry_rohanHelm2"></span>
+     <span type="item" name="Rohan Helm" dv="6072" id="entry_rohanHelm3"></span>
+     <span type="item" name="Rohan Helm" dv="6073" id="entry_rohanHelm4"></span>
+     <span type="item" name="Rohan Helm" dv="6074" id="entry_rohanHelm5"></span>
+     <span type="item" name="Rohan Helm" dv="6075" id="entry_rohanHelm6"></span>
+     <span type="item" name="Rohan Chestplate" dv="6077" id="entry_rohanChestplate"></span>
+     <span type="item" name="Crossbow" dv="6078" id="entry_crossbow"></span>
+     <span type="item" name="Crossbow Bolt" dv="6079" id="entry_crossbowBolt"></span>
+     <span type="item" name="Sting" dv="6082" id="entry_sting"></span>
+     <span type="item" name="Human Dagger" dv="6085" id="entry_humanDagger"></span>
+     <span type="item" name="Hobbit Dagger" dv="6086" id="entry_hobbitDagger"></span>
+     <span type="item" name="Elf Dagger" dv="6087" id="entry_elfDagger"></span>
+     <span type="item" name="Gondorian Sword" dv="6088" id="entry_gondorianSword"></span>
+     <span type="item" name="Broken Narsil" dv="6089" id="entry_brokenNarsil"></span>
+     <span type="item" name="Hammer" dv="6114" id="entry_hammer"></span>
+     <span type="item" name="Noldor Chestplate" dv="6152" id="entry_noldorChestplate"></span>
+     <span type="item" name="Boromir's Sword" dv="6155" id="entry_boromirsSword"></span>
+     <span type="item" name="Orc Sword 1" dv="6163" id="entry_orcSword"></span>
+     <span type="item" name="Orc Sword 2" dv="6164" id="entry_orcSword2"></span>
+     <span type="item" name="Goblin Sword" dv="6116" id="entry_goblinSword"></span>
+     <span type="item" name="Hobbit Axe" dv="6167" id="entry_hobbitAxe"></span>
+     <span type="item" name="Sharku's Short Sword" dv="6168" id="entry_sharkusShortsword"></span>
+     <span type="item" name="War Hack" dv="6169" id="entry_warHack"></span>
+     <span type="item" name="Shirriff Club" dv="6170" id="entry_shirriffClub"></span>
+     <span type="item" name="Spiked Mace" dv="6171" id="entry_pikeClub"></span>
+     <span type="item" name="Hobbit Sword" dv="6172" id="entry_hobbitSword"></span>
+     <span type="item" name="Hobbit Hammer" dv="6173" id="entry_hobbitHammer"></span>
+     <span type="item" name="Dwarven Axe of Moria" dv="6174" id="entry_dwarvenAxeMoria"></span>
+     <span type="item" name="Green Arrow" dv="6175" id="entry_greenArrow"></span>
+     <span type="item" name="Black Arrow" dv="6176" id="entry_blackArrow"></span>
+     <span type="item" name="Goblin Arrow" dv="6177" id="entry_goblinArrow"></span>
+     <span type="item" name="Red Arrow" dv="6178" id="entry_redArrow"></span>
+     <span type="item" name="Yellow Arrow" dv="6179" id="entry_yellowArrow"></span>
+     <span type="item" name="Throwing Rock" dv="6180" id="entry_throwingRock"></span>
+     <span type="item" name="Anduril" dv="6226" id="entry_narsil"></span>
+     <span type="item" name="Morgul Sword" dv="6227" id="entry_morgulSword"></span>
+     <span type="item" name="Elven Long Sword" dv="6228" id="entry_elvenLongSword"></span>
+     <span type="item" name="Berserker Sword" dv="6229" id="entry_berserkerSword"></span>
+     <span type="item" name="Two-handed Sword" dv="6230" id="entry_twoHandedSword"></span>
+     <span type="item" name="Hobbit Bow" dv="6232" id="entry_hobbitBow"></span>
+     <span type="item" name="Rohan Shield" dv="6233" id="entry_rohanShield6"></span>
+     <span type="item" name="Throwing Stone" dv="6234" id="entry_throwingStone"></span>
+     <span type="item" name="Rohirrim Axe" dv="6235" id="entry_rohirrimAxe"></span>
+     <span type="item" name="Ecthelion's Boots" dv="6236" id="entry_ecthelionsBoots"></span>
+    </div>
+    <div title="Brewing" id="tabBrewing">
+    </div>
+    <div title="Materials" id="tabMaterials">
+     <span type="item" name="Mithril Ingot" dv="6001" id="entry_mithrilIngot"></span>
+     <span type="item" name="Bronze Ingot" dv="6002" id="entry_bronzeIngot"></span>
+     <span type="item" name="Ruby" dv="6007" id="entry_jewelRed"></span>
+     <span type="item" name="Jade" dv="6008" id="entry_jewelGreen"></span>
+     <span type="item" name="Amber" dv="6009" id="entry_jewelYellow"></span>
+     <span type="item" name="Crystal" dv="6014" id="entry_crystal"></span>
+     <span type="item" name="Amethyst" dv="6015" id="entry_jewelPurple"></span>
+     <span type="item" name="Onyx" dv="6016" id="entry_jewelBlack"></span>
+     <span type="item" name="Moonstone" dv="6017" id="entry_jewelGrey"></span>
+     <span type="item" name="Quartz" dv="6018" id="entry_jewelWhite"></span>
+     <span type="item" name="Tanzanite" dv="6019" id="entry_jewelNavy"></span>
+     <span type="item" name="Blue Feather" dv="6023" id="entry_blueFeather"></span>
+     <span type="item" name="Spider Poision" dv="6026" id="entry_spiderPoison"></span>
+     <span type="item" name="Bear Claw" dv="6040" id="entry_bearClaw"></span>
+     <span type="item" name="Beast Skin" dv="6041" id="entry_beastSkin"></span>
+     <span type="item" name="Dead Root" dv="6042" id="entry_deadRoot"></span>
+     <span type="item" name="Eagle Feather" dv="6043" id="entry_eagleFeather"></span>
+     <span type="item" name="Goblin Eye" dv="6044" id="entry_goblinEye"></span>
+     <span type="item" name="Helegrog Deamon Heart" dv="6045" id="entry_helegrogDeamonHeart"></span>
+     <span type="item" name="Orc Blood" dv="6046" id="entry_orcBlood"></span>
+     <span type="item" name="Owl Feather" dv="6047" id="entry_owlFeather"></span>
+     <span type="item" name="Scorpion Tail" dv="6048" id="entry_scorpionTail"></span>
+     <span type="item" name="Shark Tooth" dv="6049" id="entry_sharkTooth"></span>
+     <span type="item" name="Troll Skin" dv="6050" id="entry_trollSkin"></span>
+     <span type="item" name="Warg Fang" dv="6051" id="entry_wargFang"></span>
+     <span type="item" name="Stone of Darkness" dv="6103" id="entry_stoneDarkness"></span>
+     <span type="item" name="Stone of Earth" dv="6104" id="entry_stoneEarth"></span>
+     <span type="item" name="Stone of Fire" dv="6105" id="entry_stoneFire"></span>
+     <span type="item" name="Stone of Greed" dv="6106" id="entry_stoneGreed"></span>
+     <span type="item" name="Stone of Hope" dv="6107" id="entry_stoneHope"></span>
+     <span type="item" name="Stone of Nature" dv="6108" id="entry_stoneNature"></span>
+     <span type="item" name="Stone of Sunlight" dv="6109" id="entry_stoneSunlight"></span>
+     <span type="item" name="Stone of the Sea" dv="6110" id="entry_stoneSea"></span>
+     <span type="item" name="Stone of the Sky" dv="6111" id="entry_stoneSky"></span>
+     <span type="item" name="Stone of Wealth" dv="6112" id="entry_stoneWealth"></span>
+     <span type="item" name="Stone of Wind" dv="6113" id="entry_stoneWind"></span>
+     <span type="item" name="Salt" dv="6151" id="entry_salt"></span>
+     <span type="item" name="Silver Ingot" dv="6153" id="entry_silverIngot"></span>
+     <span type="item" name="Boar Horns" dv="6181" id="entry_boarHorns"></span>
+    </div>
+    <div title="Unlisted Objects" id="tabInventory">
+     
+    </div>
+   </span>
+   <span id="preload">
+    <img src="resources/images/dataWidget/tabTopLeftSelected.png" />
+    <img src="resources/images/dataWidget/tabTopSelected.png" />
+    <img src="resources/images/dataWidget/tabTopRightSelected.png" />
+    <img src="resources/images/dataWidget/tabBottomLeftSelected.png" />
+    <img src="resources/images/dataWidget/tabBottomSelected.png" />
+    <img src="resources/images/dataWidget/tabBottomRightSelected.png" />
+   </span>
+  </div>
