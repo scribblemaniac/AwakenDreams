@@ -1,5 +1,10 @@
 <?php
 
+/* Notice
+ * 
+ * If you are modfiying this file, you must also update pageTemplate.html in the related resources section accordingly.
+ */
+
 // Import files
 try {
 	require_once(realpath($_SERVER['DOCUMENT_ROOT']).'/resources/serverside_scripts/global.php');
