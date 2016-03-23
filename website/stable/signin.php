@@ -8,7 +8,7 @@ $dbm = new DBManager('arphen', 'logindb');
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
  <head>
-  <title>Login - The Valar Project</title>
+  <title>Sign In - The Valar Project</title>
   <?php head(); ?>
   <style>
 .noTop {
@@ -68,8 +68,8 @@ function getPrivate(key) {
 	}
 }
 
-function submitLogin() {
-	$("#login_feedback").html("Logging in, please be patient as this can take several seconds.").show();
+function submitSignIn() {
+	$("#signin_feedback").html("Logging in, please be patient as this can take several seconds.").show();
 	
 	var realm = "TVP";
 	
@@ -79,7 +79,7 @@ function submitLogin() {
 	var password = $("#password").val();
 	verifyPassword();
 
-	if($("#login_form input").hasClass("invalid")) return;
+	if($("#signin_form input").hasClass("invalid")) return;
 
 	var message = username + realm + password;
 
@@ -108,10 +108,10 @@ function submitLogin() {
 		if(data.status == "success") {
 			document.cookie = "opaque=" + auth.opaque;
 			setPrivate("username", username);
-			$("#login_feedback").html("You are now logged in as " + username);
+			$("#signin_feedback").html("You are now signed in as " + username);
 		}
 		else {
-			$("#login_feedback").html("Sorry, login has failed. Please try again.");
+			$("#signin_feedback").html("Sorry, sign in has failed. Please try again.");
 		}
 	});
 }
@@ -166,21 +166,21 @@ function verifyPassword() {
 
 $(document).ready(function() {
 	if(auth.signedIn) {
-		$("#login_form").hide();
+		$("#signin_form").hide();
 		// TODO add logout option
 		$("#pageContents").append("You are already signed in.");
 		return;
 	}
-	$("#login_submit").click(submitLogin);
-	$("#login_form").submit(function(e) { submitLogin(); e.preventDefault(); });
+	$("#signin_submit").click(submitSignIn);
+	$("#signin_form").submit(function(e) { submitSignIn(); e.preventDefault(); });
 });
   </script>
  </head>
  <body>
   <?php bodyStart(); ?>
-  <form id="login_form">
-   <h1>Login</h1>
-   <p id="login_feedback"></p>
+  <form id="signin_form">
+   <h1>Sign In</h1>
+   <p id="signin_feedback"></p>
    <table>
     <tbody>
      <tr>
@@ -196,9 +196,9 @@ $(document).ready(function() {
     </tbody>
    </table>
    <p><a class="hiddenLink">Forgot password</a></p>
-   <button id="login_submit">Login</button>
+   <button id="signin_submit">Login</button>
   </form>
-  <a href="signup.php">Don't have an account? Sign up here!</a>
+  <a href="register.php">Don't have an account? Sign up here!</a>
   <?php bodyEnd(); ?>
  </body>
 </html>

@@ -4,7 +4,7 @@ include('pageContent.php');
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
  <head>
-  <title>Sign Up - The Valar Project</title>
+  <title>Register - The Valar Project</title>
   <?php head(); ?>
   <style>
 .noTop {
@@ -61,7 +61,7 @@ function getPrivate(key) {
 	}
 }
 
-function submitSignup() {
+function submitRegister() {
 	var hasInvalid = false;
 	
 	var username = $("#username").val();
@@ -110,10 +110,10 @@ function submitSignup() {
 	$.post("/resources/serverside_scripts/login_manager.php", { op: "signup", username: username, email: $("#email").val(), password: password }, function(data) {
 		$("#login_form").hide();
 		if(data.status == success) {
-			$("#pageContents").append("You have been signed up successfully. Please check your email for a message from us, and follow the link to activate your account. Until you do this, you will not be able to log in.");
+			$("#pageContents").append("You have been registered up successfully. Please check your email for a message from us, and follow the link to activate your account. Until you do this, you will not be able to log in.");
 		}
 		else {
-			$("#pageContents").append("An error occurred and you could not be signed up, please try again later and report the issue if it persists.");
+			$("#pageContents").append("An error occurred and you could not be registered, please try again later and report the issue if it persists.");
 		}
 	}, "json");
 }
@@ -220,7 +220,7 @@ function verifyUsername(async) {
 
 $(document).ready(function() {
 	if(auth.signedIn) {
-		$("#signup_form").hide();
+		$("#register_form").hide();
 		// TODO add logout option
 		$("#pageContents").append("You are already signed in.");
 		return;
@@ -244,15 +244,15 @@ $(document).ready(function() {
 	if($.trim($("#username").val()) != "") {
 		verifyUsername();
 	}
-	$("#signup_submit").click(submitSignup);
-	$("#submit_form").submit(function(e) { submitSignup(); e.preventDefault(); });
+	$("#register_submit").click(submitRegister);
+	$("#register_form").submit(function(e) { submitRegister(); e.preventDefault(); });
 });
   </script>
  </head>
  <body>
   <?php bodyStart(); ?>
-  <form id="signup_form">
-   <h1>Sign Up</h1>
+  <form id="register_form">
+   <h1>Register</h1>
    <table>
     <tbody>
      <tr>
@@ -277,9 +277,9 @@ $(document).ready(function() {
      </tr>
     </tbody>
    </table>
-   <button id="signup_submit">Sign Up</button>
+   <button id="register_submit"></button>
   </form>
-  <a href="login.php">Already have an account? Log in here!</a>
+  <a href="signin.php">Already have an account? Log in here!</a>
   <?php bodyEnd(); ?>
  </body>
 </html>
