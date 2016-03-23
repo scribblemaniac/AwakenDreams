@@ -2,12 +2,11 @@
 server.tvp.x10host.com/
 wiki/
 cgi-bin/
-alpha/
 
 # Contains mysql passwords, and therefore cannot be shared
 database_credentials.php
 
-# Anything prefixed with an underscore is private
+# Anything prefixed with an underscore is private for convenience
 _*
 
 # tmp is a deprecated folder that used to be used for encrypting emails
