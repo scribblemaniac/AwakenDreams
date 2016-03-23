@@ -277,7 +277,7 @@ $(document).ready(function() {
      </tr>
     </tbody>
    </table>
-   <button id="register_submit"></button>
+   <button id="register_submit">Register</button>
   </form>
   <a href="signin.php">Already have an account? Log in here!</a>
   <?php bodyEnd(); ?>

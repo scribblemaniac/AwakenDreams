@@ -196,7 +196,7 @@ $(document).ready(function() {
     </tbody>
    </table>
    <p><a class="hiddenLink">Forgot password</a></p>
-   <button id="signin_submit">Login</button>
+   <button id="signin_submit">Sign In</button>
   </form>
   <a href="register.php">Don't have an account? Sign up here!</a>
   <?php bodyEnd(); ?>
