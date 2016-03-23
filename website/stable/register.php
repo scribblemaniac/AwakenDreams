@@ -108,7 +108,6 @@ function submitRegister() {
 	password = password.split("").map(function(c, i) { return map[(map.indexOf(c) + parseInt(shift[i], 16)) % 94]; }).join("");
 	
 	$.post("/resources/serverside_scripts/login_manager.php", { op: "signup", username: username, email: $("#email").val(), password: password }, function(data) {
-		$("#login_form").hide();
 		if(data.status == success) {
 			$("#pageContents").append("You have been registered up successfully. Please check your email for a message from us, and follow the link to activate your account. Until you do this, you will not be able to log in.");
 		}
