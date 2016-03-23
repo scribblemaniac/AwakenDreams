@@ -65,11 +65,21 @@ function getPrivate(key) {
 }
 
 function submitLogin() {
-	var realm = "TVP";
-	var username = $("#username").val();
-	var password = $("#password").val();
-	var message = username + realm + password;
+	$("#login_feedback").html("Logging in, please be patient as this can take several seconds.").show();
 	
+	var realm = "TVP";
+	
+	var username = $("#username").val();
+	verifyUsername();
+	
+	var password = $("#password").val();
+	verifyPassword();
+
+	if($("#login_form input").hasClass("invalid")) return;
+
+	var message = username + realm + password;
+
+	// Apply apply hmac 4096 times, outputting hex in the iteration
 	var shaObj = new jsSHA("SHA-512", "TEXT");
 	shaObj.update(message);
 	var subhash = "";
@@ -84,86 +94,70 @@ function submitLogin() {
 	shaObj.setHMACKey(message, "TEXT");
 	shaObj.update(subhash);
 	subhash = shaObj.getHMAC("HEX");
-	
+
 	shaObj = new jsSHA("SHA-512", "TEXT");
 	shaObj.setHMACKey(subhash, "TEXT");
-	shaObj.update(auth.nonce + auth.cnonce);
+	shaObj.update(auth.nonce);
 	var hash = shaObj.getHMAC("HEX");
-	
+
 	$.post("/resources/serverside_scripts/login_manager.php", { op: "login", username: username, opaque: auth.opaque, hmac: hash }, function(data) {
 		if(data.status == "success") {
 			document.cookie = "opaque=" + auth.opaque;
-			document.cookie = "cnonce=1";
 			setPrivate("username", username);
-			setPrivate("hmac", hash);
-			setPrivate("nonce", auth.nonce);
 			$("#login_feedback").html("You are now logged in as " + username);
 		}
 		else {
 			$("#login_feedback").html("Sorry, login has failed. Please try again.");
 		}
 	});
-	
-	//$("#login_form,#signup_form").hide();
-	$("#login_feedback").html("Logging in, please be patient as this can take many seconds.").show();
 }
 
-function verifyUsername(async) {
-	async = typeof async == "undefined" ? true : async;
-	var username_input = $("#signup_username");
-	var username = username_input.val();
-	var username_feedback = $("#signup_username_feedback");
+function verifyUsername() {
+	var username = $("#username").val();
 	var username_pattern = new RegExp("^[A-Za-z0-9]*$");
 	if(username == "") {
-		username_feedback.html("Username cannot be empty.");
-		username_input.addClass("invalid");
-		return;
+		$("#username_feedback").html("Username cannot be empty.");
+		$("#username").addClass("invalid");
 	}
 	else if(username.length < 4) {
-		username_feedback.html("Usernames must be at least 4 characters long.");
-		username_input.addClass("invalid");
-		return;
+		$("#username_feedback").html("Usernames must be at least 4 characters long.");
+		$("#username").addClass("invalid");
 	}
 	else if(username.length > 16) {
-		username_feedback.html("Usernames must be no longer than 16 characters long.");
-		username_input.addClass("invalid");
-		return;
+		$("#username_feedback").html("Usernames must be no longer than 16 characters long.");
+		$("#username").addClass("invalid");
 	}
 	else if(!username_pattern.test(username)) {
-		username_feedback.html("Usernames ust be made up of only letters and numbers.");
-		username_input.addClass("invalid");
-		return;
+		$("#username_feedback").html("Usernames must be made up of only letters and numbers.");
+		$("#username").addClass("invalid");
 	}
 	else {
-		username_feedback.html("");
-		username_input.removeClass("invalid");
+		$("#username_feedback").html("");
+		$("#username").removeClass("invalid");
 	}
-	$.post({ url: "/resources/serverside_scripts/login_manager.php", data: { op: "username_validate", username: username }, dataType: "text", async: async, success: function(rawData) {
-		var data = null;
-		try {
-			// Parse the server's response as JSON
-			data = JSON.parse(rawData);
-		}
-		catch(err) {}
-		
-		if(data == null || data.status == null || data.status != "success" || data.result == null) {
-			// If we get an error, we must assume the username is not okay
-			username_feedback.html("Username is already taken.");
-			username_input.addClass("invalid");
-		}
-		else {
-			if(data.result) { // Username is free
-				username_feedback.html("");
-				username_input.removeClass("invalid");
-			}
-			else { // Username is taken
-				if(username_feedback != null) {
-					username_feedback.html("Username is already taken.");
-				}
-				username_input.addClass("invalid");
-			}
-		}
-	}});
+}
+
+function verifyPassword() {
+	var password = $("#password").val();
+	var password_feedback = $("#password_feedback");
+	// TODO double check to make sure escapes are working properly
+	var password_pattern = new RegExp("^[A-Za-z0-9!\"#$%&'()\*+,-\./:;<=>\?@[\\\]\^_`{|}~]*$");
+	if(password.length < 6) {
+		$("#password_feedback").html("Passwords must be at least 6 characters long.");
+		$("#password").addClass("invalid");
+	}
+	else if(password.length > 72) {
+		$("#password_feedback").html("Passwords must be no longer than 72 characters long.");
+		$("#password").addClass("invalid");
+	}
+	else if(!password_pattern.test(password)) {
+		// TODO Come up with better styling to separate the special characters.
+		$("#password_feedback").html("Passwords must made up of letters, numbers, and these special characters: !\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~.");
+		$("#password").addClass("invalid");
+	}
+	else {
+		$("#password").removeClass("invalid");
+	}
 }
 
 $(document).ready(function() {
@@ -186,12 +180,14 @@ $(document).ready(function() {
    <table>
     <tbody>
      <tr>
-      <td>Username:&nbsp;</td>
+      <td><label for="username">Username:&nbsp;</label></td>
       <td><div class="text-wrapper noBottom"><input type="text" name="username" id="username" /></div></td>
+      <td id="username_feedback"></td>
      </tr>
     <tr>
-      <td>Password:&nbsp;</td>
-      <td><div class="text-wrapper noTop"><input type="password" name="password" id="password" /></div></td>
+      <td><label for="password">Password:&nbsp;</label></td>
+      <td><div class="text-wrapper noTop noBottom"><input type="password" name="password" id="password" /></div></td>
+      <td id="password_feedback"></td>
      </tr>
     </tbody>
    </table>
