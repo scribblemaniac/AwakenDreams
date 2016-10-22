@@ -1,4 +1,7 @@
-# Awaken Dreams
-A large Middle Earth mod for Minecraft
+# This project has moved
 
-Don't worry, we're working on making a better description than this!
+The Awaken Dreams mod client can be found [here](https://github.com/TheValarProject/AwakenDreamsClient)
+
+The Awaken Dreams mod server can be found [here](https://github.com/TheValarProject/AwakenDreamsServer)
+
+The stable Valar Project website can be found [here](https://github.com/TheValarProject/TheValarProjectWebsite) and the development Valar Project website can be found [here](https://github.com/TheValarProject/TheValarProjectDeveloperWebsite)
